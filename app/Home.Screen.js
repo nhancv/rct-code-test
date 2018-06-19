@@ -1,31 +1,72 @@
-import React, { Component } from 'react'
-import { StyleSheet, Text, View, Button } from 'react-native'
+import React, {Component} from 'react'
+import {ActivityIndicator, FlatList, Image, StyleSheet, Text, View} from 'react-native'
 
 export default class HomeScreen extends Component {
-  perPage = 10
-  pageIndex = 1
-  totalPage = 1
+  perPage = 10;
+  pageIndex = 1;
+  totalPage = 1;
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      isEnd: false,
+      data: [],
+    }
+  }
+
+  renderItem({item}) {
+    return (
+
+      <View style={{padding: 10, flexDirection: 'row', width: '100%'}}>
+        <Image
+          source={{uri: item.avatar}}
+          style={{borderRadius: 35, margin: 10, width: 70, height: 70}}
+        />
+        <View style={{flex: 3, justifyContent: 'center'}}>
+          <Text style={{color: 'black', marginLeft: 20}}>{item.first_name} {item.last_name}</Text>
+        </View>
+      </View>
+    )
+  }
+
+  renderSeparator() {
+    return <View style={styles.viewSeparator}/>
+  }
 
   fetchData = () => {
-    if (this.pageIndex > this.totalPage) return Promise.reject('No more results')
 
-    return fetch(`https://reqres.in/api/users?page=${this.pageIndex}&per_page=${this.perPage}`)
-      .then(response => {
-        return response.json()
+    if (this.pageIndex > this.totalPage) {
+      this.setState({
+        isLoading: false,
+        isEnd: true,
       })
-      .then(res => {
-        console.log(res)
+    } else {
+      this.setState({
+        isLoading: true,
+      });
 
-        this.totalPage = res.total_pages
-        if (this.pageIndex <= this.totalPage) this.pageIndex++
-        return Promise.resolve(res)
-      })
-  }
+      return fetch(`https://reqres.in/api/users?page=${this.pageIndex}&per_page=${this.perPage}`)
+        .then(response => {
+          return response.json()
+        })
+        .then(res => {
+          console.log(res);
+          this.setState({
+            data: [...this.state.data, ...res.data],
+            isLoading: false,
+          });
+          this.totalPage = res.total_pages;
+          if (this.pageIndex <= this.totalPage) this.pageIndex++;
+          return Promise.resolve(res)
+        })
+    }
+  };
 
   componentDidMount() {
     this.fetchData().then(
       res => {
-        console.log('First fetching data')
+        console.log('First fetching data');
       },
       err => {
         console.error(err)
@@ -36,17 +77,20 @@ export default class HomeScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit HomeScreen.js</Text>
-        <Button
-          onPress={() => {
-            this.fetchData().catch(err => {
-              console.log(err)
-            })
-          }}
-          title="Load More"
-          color="#841584"
+        <FlatList
+          style={styles.viewList}
+          data={this.state.data}
+          renderItem={this.renderItem}
+          keyExtractor={(item, index) => index.toString()}
+          ItemSeparatorComponent={this.renderSeparator}
+          onEndReached={this.fetchData}
+          onEndReachedThreshold={0}
         />
+        {this.state.isEnd ? <View
+          style={styles.viewBottom}>
+          <Text style={{color: 'white'}}>No more data</Text>
+        </View> : null}
+        {this.state.isLoading ? <ActivityIndicator size="large" color="#7FB900"/> : null}
       </View>
     )
   }
@@ -59,14 +103,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF'
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10
+  viewSeparator: {
+    width: '90%',
+    height: 0.5,
+    backgroundColor: '#7e8da6',
+    alignSelf: 'center'
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5
+  viewList: {
+    backgroundColor: '#f5f5f5',
+    width: '100%',
+    height: '100%'
+  },
+  viewBottom: {
+    backgroundColor: '#ffbf00',
+    width: '100%',
+    padding: 10,
+    alignItems: 'center'
   }
-})
+});
