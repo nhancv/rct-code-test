@@ -14,7 +14,7 @@ const RootStack = StackNavigator({
   LaunchScreen: {screen: LaunchScreen}
 },{
   headerMode: 'none',
-  initialRouteName: 'LaunchScreen',
+  initialRouteName: 'HomeScreen',
 })
 
 export default class App extends Component {
