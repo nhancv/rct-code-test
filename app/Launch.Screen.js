@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { Animated, Easing, StyleSheet, View } from 'react-native'
+import React, {Component} from 'react'
+import {Animated, Easing, StyleSheet, View} from 'react-native'
 
 export default class LaunchScreen extends Component {
   constructor(props) {
@@ -18,38 +18,42 @@ export default class LaunchScreen extends Component {
     this.zoomView2.setValue(1)
     this.fadeView2.setValue(0)
 
-    Animated.parallel([
-      Animated.timing(this.zoomView1, {
-        toValue: 1.75,
-        duration: 1500,
-        easing: Easing.linear,
-        delay: 0
-      }),
-      Animated.timing(this.fadeView1, {
-        toValue: 1,
-        duration: 1500,
-        easing: Easing.linear,
-        delay: 0
-      }),
-      Animated.timing(this.zoomView2, {
-        toValue: 1.75,
-        duration: 2000,
-        easing: Easing.linear,
-        delay: 500
-      }),
-      Animated.timing(this.fadeView2, {
-        toValue: 1,
-        duration: 2500,
-        easing: Easing.linear,
-        delay: 500
-      })
-    ]).start(() => this.runAnimation())
+    Animated.loop(
+      Animated.parallel([
+        Animated.timing(this.zoomView1, {
+          toValue: 5,
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+        Animated.timing(this.fadeView1, {
+          toValue: 1,
+          duration: 2000,
+          easing: Easing.linear,
+        }),
+      ])).start()
+
+    setTimeout(() => {
+      Animated.loop(
+        Animated.parallel([
+          Animated.timing(this.zoomView2, {
+            toValue: 5,
+            duration: 2000,
+            easing: Easing.linear,
+          }),
+          Animated.timing(this.fadeView2, {
+            toValue: 1,
+            duration: 2000,
+            easing: Easing.linear,
+          }),
+        ])).start()
+    }, 750);
+
   }
 
   componentDidMount() {
-    // setTimeout(() => {
-    //     this.props.navigation.navigate('HomeScreen', {})
-    // }, 3000);
+    setTimeout(() => {
+      this.props.navigation.navigate('HomeScreen', {})
+    }, 3000);
 
     this.runAnimation()
   }
@@ -68,14 +72,14 @@ export default class LaunchScreen extends Component {
       <View style={styles.container}>
         {/*First circle*/}
         <Animated.View
-          style={[styles.viewWrapCircle, { transform: [{ scale: this.zoomView1 }], opacity: bounceFadeView1 }]}
+          style={[styles.viewWrapCircle, {transform: [{scale: this.zoomView1}], opacity: bounceFadeView1}]}
         />
         {/*Second circle*/}
         <Animated.View
-          style={[styles.viewWrapCircle, { transform: [{ scale: this.zoomView2 }], opacity: bounceFadeView2 }]}
+          style={[styles.viewWrapCircle, {transform: [{scale: this.zoomView2}], opacity: bounceFadeView2}]}
         />
-       
-        <View style={styles.viewGreenCircle} />
+
+        <View style={styles.viewGreenCircle}/>
       </View>
     )
   }
@@ -96,10 +100,17 @@ const styles = StyleSheet.create({
     position: 'absolute'
   },
   viewWrapCircle: {
-    width: 100,
-    height: 100,
+    width: 32,
+    height: 32,
     backgroundColor: '#D0E5A3',
     borderRadius: 50,
     position: 'absolute'
-  }
-})
+  },
+  viewWrapCircle2: {
+    width: 32,
+    height: 32,
+    backgroundColor: 'red',
+    borderRadius: 50,
+    position: 'absolute'
+  },
+});
