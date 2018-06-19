@@ -77,6 +77,9 @@ export default class HomeScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.toolbar}>
+          <Text style={styles.titleToolbar}>Users</Text>
+        </View>
         <FlatList
           style={styles.viewList}
           data={this.state.data}
@@ -102,6 +105,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF'
+  },
+  toolbar: {
+    width: '100%',
+    height: 48,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    flexDirection: 'row'
+  },
+  titleToolbar: {
+    color: '#203152',
+    fontWeight: 'bold',
+    fontSize: 18,
+    textAlign: 'center',
+    flex: 1
   },
   viewSeparator: {
     width: '90%',
