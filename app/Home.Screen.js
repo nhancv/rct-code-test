@@ -63,16 +63,14 @@ export default class HomeScreen extends Component {
   }
 
   componentDidMount() {
-    setTimeout(()=>{
-      this.fetchData().then(
-        res => {
-          console.log('First fetching data')
-        },
-        err => {
-          console.error(err)
-        }
-      )
-    }, 200)
+    this.fetchData().then(
+      res => {
+        console.log('First fetching data')
+      },
+      err => {
+        console.error(err)
+      }
+    )
   }
 
   componentDidUpdate() {
@@ -102,7 +100,7 @@ export default class HomeScreen extends Component {
           keyExtractor={(item, index) => index.toString()}
           ItemSeparatorComponent={this.renderSeparator}
           onEndReached={this.fetchData}
-          onEndReachedThreshold={1}
+          onEndReachedThreshold={0.5}
         />
         {this.state.isEnd && this.state.isShowNoResults ? (
           <View style={styles.viewBottom}>
